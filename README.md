@@ -15,4 +15,11 @@ return D*(x+y) + (D2 - D*2) * min(x,y)
 D is the cost of moving up, down, right, or left.
 D2 is the cost of moving diagonally. 
 
+**## Performance:**
+**### World1:**
+**Manhattan:**
+**Diagonal**
 
+**### World2:**
+**Manhattan:**
+**Diagonal**
