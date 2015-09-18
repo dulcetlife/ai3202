@@ -17,8 +17,8 @@ D2 is the cost of moving diagonally.
 
 **## Performance:**
 **### World1:**
-**Manhattan:**
-**Diagonal**
+**Manhattan:** The cost using the manhattan distance was 124, and it searched through 72 nodes.
+**Diagonal:** The cost using the diagonal distance was 123, and it searched through 80 nodes.
 
 **### World2:**
 **Manhattan:**
