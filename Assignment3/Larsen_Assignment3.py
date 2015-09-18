@@ -1,13 +1,12 @@
 #CSCI3202
 #Assignment 3
 #Henrik Larsen
-#Got a lot of inspiration from this website:
+#A lot of the ideas here are taken from this website:
 # http://www.laurentluce.com/posts/solving-mazes-using-python-simple-recursivity-and-a-search
 #Implemented in Python 3
 
 import sys
 import Queue
-
 
 
 class Node(object):
@@ -63,14 +62,14 @@ def getEnd(graph):
 	end = (0, len(graph[0])-1)
 	return end
 
-def getLocation(coord,graph):
-	x = coord[0]
-	y = coord[1]
+def getLocation(crd,graph):
+	x = crd[0]
+	y = crd[1]
 	return x,y
 
-def getValid(coord, graph):
-	x = coord[0]
-	y = coord[1]
+def getValid(crd, graph):
+	x = crd[0]
+	y = crd[1]
 	x_end = len(graph) -1
 	y_end = len(graph[x]) -1
 	if x > 0 and y > 0 and y < y_end and x < x_end:
@@ -78,9 +77,9 @@ def getValid(coord, graph):
 	else:
 		return False
 
-def checkWall(coord, graph):
-	x = coord[0]
-	y = coord[1]
+def checkWall(crd, graph):
+	x = crd[0]
+	y = crd[1]
 	for i in range(-1,1):
 		for j in range(-1,1):
 			if graph[x+i][y+i] !=2:
@@ -90,34 +89,28 @@ def checkWall(coord, graph):
 				return False
 				break
 
-def getAdjacent(coord, graph):
+def getAdjacent(crd, graph):
  
-    y = coord[1]
-    x = coord[0]
+    y = crd[1]
+    x = crd[0]
     x_end = len(graph)-1
     y_end = len(graph[x])-1
 
     cells= []
-    if getValid(coord, graph) and checkWall(coord, graph):
+    if getValid(crd, graph) and checkWall(crd, graph):
         cells.append((x-1,y-1))
-
-    if getValid(coord, graph) and checkWall(coord, graph):
+    if getValid(crd, graph) and checkWall(crd, graph):
         cells.append((x-1,y))
-
-    if x > 0 and y < y_end and checkWall(coord, graph):
-        cells.append((x-1,y+1))
-   
-    if getValid(coord, graph) and checkWall(coord, graph):
+    if getValid(crd, graph) and checkWall(crd, graph):
         cells.append((x,y-1))
-    
-    if getValid(coord, graph) and checkWall(coord, graph):
+    if getValid(crd, graph) and checkWall(crd, graph):
         cells.append((x+1,y-1))
-    
-    if getValid(coord, graph) and checkWall(coord, graph):
+    if getValid(crd, graph) and checkWall(crd, graph):
         cells.append((x+1,y))
-    
-    if getValid(coord,graph) and checkWall(coord, graph):
+    if getValid(crd,graph) and checkWall(crd, graph):
         cells.append((x+1,y+1))
+    if x > 0 and y < y_end and checkWall(crd, graph):
+        cells.append((x-1,y+1))
     #For some weird reason, this one doesn't like getValid() and checkWall()
     if y < y_end and (graph[x][y+1] != 2):
         cells.append((x,y+1))
@@ -190,10 +183,6 @@ def main():
 	print "The path taken:", path
 	print "The total cost for", world, "is:",cost, "with the", heuristic,"heuristic function"
 	print nodes, "nodes were evaluted throughout the search"
-
-
-
-	
 
 
 if __name__ == '__main__':
