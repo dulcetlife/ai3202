@@ -3,10 +3,11 @@
 #Henrik Larsen
 #Got a lot of inspiration from this website:
 # http://www.laurentluce.com/posts/solving-mazes-using-python-simple-recursivity-and-a-search
+#Implemented in Python 3
 
 import sys
 import Queue
-import math
+
 
 
 class Node(object):
@@ -55,12 +56,10 @@ def diagonal(crd1, crd2):
 	return 10*(a+b)+(14 - (2 * 10)) * min(a,b) 
 
 def getStart(graph):
-	#start = (0, len(graph) -1)
 	start = (len(graph)-1, 0)
 	return start
 
 def getEnd(graph):
-	#end = (len(graph[0]) -1 ,0)
 	end = (0, len(graph[0])-1)
 	return end
 
@@ -119,7 +118,7 @@ def getAdjacent(coord, graph):
     
     if getValid(coord,graph) and checkWall(coord, graph):
         cells.append((x+1,y+1))
-
+    #For some weird reason, this one doesn't like getValid() and checkWall()
     if y < y_end and (graph[x][y+1] != 2):
         cells.append((x,y+1))
     return cells
@@ -184,8 +183,6 @@ def main():
 	graph = makeGraph(world)
 	start = getStart(graph)
 	end = getEnd(graph)
-	#start = (len(graph)-1, 0)
-	#end  = (0, len(graph[0])-1)
 	if heuristic == manhattan:
 		path, cost, nodes = aStar(start,end, manhattan, graph)
 	else:
