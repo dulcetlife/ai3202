@@ -7,7 +7,8 @@ Example: python Larsen_Assignment3.py World1.txt Manhattan - This will run throu
 
 
 **## My heuristic function:**
-I picked the diagonal function as the second heuristic function. 
+I picked the diagonal function as the second heuristic function.
+I got the idea for this heuristic function from this website: http://theory.stanford.edu/~amitp/GameProgramming/Heuristics.html 
 The equation for the diagonal function is:
 x = abs(start.x - goal.x)
 y = abs(start.y - goal.y)
