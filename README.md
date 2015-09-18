@@ -1,7 +1,7 @@
 **## ai3202**
 
 **## How to run the program:**
-In the command line, type python Larsen_Assignment3.py <world> <heuristic>
+In the command line, type python Larsen_Assignment3.py "world" "heuristic"
 You need to pick either World1.txt or World2.txt for the world, and Manhattan or Diagonal for the heuristic function.
 Example: python Larsen_Assignment3.py World1.txt Manhattan - This will run through world1 using the manhattan function. 
 
