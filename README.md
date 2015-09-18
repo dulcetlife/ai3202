@@ -27,7 +27,9 @@ I chose this heuristic function, because I thought it would find a faster and st
 	- Final Path: (7,0),(7,1),(6,2),(5,3),(5,4),(4,5),(3,5),(2,6),(1,7),(0,8),(0,9)
 
 **### World2:**
+
 **Manhattan:** The cost using the manhattan distance was 146, and it searched through 69 nodes.
 	- Final Path: (7,0),(7,1),(6,2),(6,3),(6,4),(5,4),(4,5),(3,5),(2,5),(1,6),(0,7),(0,8),(0,9)
+    
 **Diagonal:** The cost using the diagonal distance was 146, and it searched through 80 nodes.
 	- Final Path: 7,0),(7,1),(6,2),(6,3),(6,4),(5,4),(4,5),(3,5),(2,5),(1,6),(0,7),(0,8),(0,9)
