@@ -19,7 +19,7 @@ class MDP(object):
 		self.x = x
 		self.y = y
 		self.state = state
-		#self.delta = float("inf")
+		self.delta = float("inf")
 		self.utility = 0
 		if state == 50:
 			self.utility = 50
@@ -57,8 +57,8 @@ class MDP(object):
 		return self.reward
 	def getPosition(self):
 		return self.x,self.y
-	#def getDelta(self):
-		#return self.delta
+	def getDelta(self):
+		return self.delta
 	def getUtility(self):
 		return self.utility
 	def getDirection(self):
@@ -73,8 +73,8 @@ class MDP(object):
 		self.state = s
 	def setReward(self,r):
 		self.reward = r
-	#def setDelta(self,d):
-		#self.delta = d
+	def setDelta(self,d):
+		self.delta = d
 	def setUtility(self,u):
 		self.utility = u
 	def setDirection(self,nd):
@@ -124,14 +124,7 @@ def valueIteration(mapp,e):
 
 
 def utility(mapp,i,j):
-
-	node = mapp[i][j]
-	
-	utilityOld = node.getUtility()
-
-	if(node.getState == 50 or node.getState == 2):
-		return None
-
+	node = mapp[i][j]	
 	if(i + 1 >= 8):
 		down = 0
 	else:
@@ -158,18 +151,20 @@ def utility(mapp,i,j):
 	optimal =[]
 	optimal = optimalPath(mapp,i,j,probdown,probup,probright,probleft)
 	t = optimal[0]
-	temp = node.getUtility()
-	node.setUtility(float(node.getReward()+gamma*t))
+	old = node.getUtility()
+	update = (node.getReward() + gamma*t)
+	node.setUtility(update)
 	node.setDirection(optimal[1])
-	return abs(temp - node.getUtility())
+	new = node.getUtility()
+	return abs(new - old)
 def printPath(mapp):
 	x=0
 	y=0
-	node = mapp[x][y]
-	while node.getDirection() != "DONE":
-		print node
-		temp = str(node.getDirection())
-		t = str(node.getPosition())
+	cell = mapp[x][y]
+	while cell.getDirection() != "DONE":
+		print cell
+		temp = str(cell.getDirection())
+		t = str(cell.getPosition())
 		if t == "(7, 9)":
 			break
 		if temp == "UP":
@@ -180,13 +175,9 @@ def printPath(mapp):
 			x-=1
 		elif temp == "RIGHT":
 			y+=1
-		node = mapp[x][y]
-
-
+		cell = mapp[x][y]
 
 def optimalPath(mapp,i,j,probdown,probup,probright,probleft):
-	#print x
-	#print y
 	node = mapp[i][j]
 	reward = node.getReward()
 	optimal = max(probdown, probup, probleft, probright)
@@ -209,10 +200,6 @@ def main():
 	world = makeGraph(world)
 	mapp = CreateMap(world)
 	valueIteration(mapp,e)
-	
-	
-	
-
 
 if __name__ == '__main__':
 	main()
