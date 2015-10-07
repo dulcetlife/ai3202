@@ -2,6 +2,11 @@
 #Assignment 5
 #Henrik Larsen
 #Implemented in Python3
+#A lot of the ideas are taken from these websites: 
+#http://miromannino.com/artificial-intelligence-markov-decision-process/2/
+#https://gist.github.com/jotbe/1361445
+#http://aima.cs.berkeley.edu/python/mdp.html
+#http://stackoverflow.com/questions/1535327/python-how-to-print-a-class-or-objects-of-class-using-print
 
 
 import sys
@@ -27,25 +32,20 @@ class MDP(object):
 			self.dir = "DONE"
 		else:
 			self.utility = 0
-			self.dir = ""
+			self.dir = ''
 			if state == 0:
 				self.reward = 0
 			elif state == 1:
 				self.reward = -1 
 			elif state == 2:
 				self.reward = 0
-				self.dir == "WALL"
 			elif state == 3:
 				self.reward = -2
 			elif state ==4:
 				self.reward = 1
 
-
-
-
 	def possibleMoves():
 		return
-
 
 	def getX(self):
 		return self.x
@@ -123,24 +123,24 @@ def valueIteration(mapp,e):
 	printPath(mapp)
 
 
-def utility(mapp,i,j):
-	node = mapp[i][j]	
-	if(i + 1 >= 8):
+def utility(mapp,x,y):
+	node = mapp[x][y]	
+	if(x + 1 >= 8):
 		down = 0
 	else:
-		down = mapp[i+1][j].getUtility()
-	if(i-1 <0):
+		down = mapp[x+1][y].getUtility()
+	if(x-1 <0):
 		up = 0
 	else:
-		up = mapp[i-1][j].getUtility()
-	if(j+1>= 10):
+		up = mapp[x-1][y].getUtility()
+	if(y+1>= 10):
 		right = 0
 	else:
-		right = mapp[i][j+1].getUtility()
-	if(j-1<0):
+		right = mapp[x][y+1].getUtility()
+	if(y-1<0):
 		left = 0
 	else:
-		left = mapp[i][j-1].getUtility()
+		left = mapp[x][y-1].getUtility()
 
 	probdown = s*down + ns*left + ns*right
 	probup = s*up + ns*left + ns*right
@@ -149,7 +149,7 @@ def utility(mapp,i,j):
 
 
 	optimal =[]
-	optimal = optimalPath(mapp,i,j,probdown,probup,probright,probleft)
+	optimal = optimalPath(mapp,x,y,probdown,probup,probright,probleft)
 	t = optimal[0]
 	old = node.getUtility()
 	update = (node.getReward() + gamma*t)
@@ -177,8 +177,8 @@ def printPath(mapp):
 			y+=1
 		cell = mapp[x][y]
 
-def optimalPath(mapp,i,j,probdown,probup,probright,probleft):
-	node = mapp[i][j]
+def optimalPath(mapp,x,y,probdown,probup,probright,probleft):
+	node = mapp[x][y]
 	reward = node.getReward()
 	optimal = max(probdown, probup, probleft, probright)
 	if optimal == probdown:
