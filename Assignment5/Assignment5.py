@@ -1,4 +1,8 @@
+#CSCI3202
 #Assignment 5
+#Henrik Larsen
+#Implemented in Python3
+
 
 import sys
 import math
@@ -77,39 +81,21 @@ class MDP(object):
 		self.dir = nd
 
 	def __str__(self):
-		return ("Position:" + str(self.x)+ "," + str(self.y) + ", Next move: " + self.dir + ", Utility: " + str(self.utility))
+		return ("Current position: " + "(" + str(self.x)+ ", " + str(self.y) + "), Utility: " + str(self.utility))
 def makeGraph(world):
-	graph = []
-	world = open(world, 'r')
-	for i in world.readlines():
-		l = i.split()
-		if(len(l)) > 0:
-			graph.append([int(j) for j in l])
-	return graph
+	temp = open(world, 'r').readlines()
+	newWorld = []
+	for line in reversed(temp):
+		newWorld.append(line.split())
+	return newWorld[1:]
 
 def CreateMap(mapp):
-	for i in range(0,len(mapp)):
-		for j in range(0, len(mapp[i])):
-			#print MDP(i,j,mapp[i][j])
-			mapp[i][j] = MDP(i,j,int(mapp[i][j]))
-	return mapp
-
-def Grapher(file):
-	fp = open(file, 'r').readlines()
-	graph = []
-	for line in reversed(fp):
-		graph.append(line.split(" "))
-
-	graph = graph[1:]
-	list_of_nodes = []
-
-	for i in range(len(graph)):
-		list_of_nodes.append([])
-		for j in range(len(graph[i])):
-			list_of_nodes[i].append(MDP(i, j, int(graph[i][j])))
-
-	return list_of_nodes
-
+	newMapp = []
+	for i in range(len(mapp)):
+		newMapp.append([])
+		for j in range(len(mapp[i])):
+			newMapp[i].append(MDP(i,j,int(mapp[i][j])))
+	return newMapp
 
 def inputAndRead():
 	if len(sys.argv) != 3:
@@ -118,9 +104,6 @@ def inputAndRead():
 	elif sys.argv[1] != "World1.txt":
 		print "Incorrect world provided! Need to be World1.txt"
 		return(False, False)
-	#elif sys.argv[2] != '1'
-		#print "Need to provide a value of e!"
-		#return(False, False)
 	else:
 		m = sys.argv[1]
 		e = float(sys.argv[2])
@@ -128,7 +111,7 @@ def inputAndRead():
 
 
 def valueIteration(mapp,e):
-	eq = e*(1-gamma)/gamma
+	eq = 0.5*(1-gamma)/gamma
 	delta = 10000
 	while (delta > eq):
 		delta = 0
@@ -223,9 +206,8 @@ def optimalPath(mapp,i,j,probdown,probup,probright,probleft):
 
 def main():
 	world, e = inputAndRead()
-	#world = makeGraph(world)
-	#mapp = CreateMap(world)
-	mapp = Grapher(world)
+	world = makeGraph(world)
+	mapp = CreateMap(world)
 	valueIteration(mapp,e)
 	
 	
