@@ -164,7 +164,7 @@ def utility(mapp,i,j):
 	return abs(temp - node.getUtility())
 def printPath(mapp):
 	x=0
-	y = 0
+	y=0
 	node = mapp[x][y]
 	while node.getDirection() != "DONE":
 		print node
