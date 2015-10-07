@@ -17,7 +17,6 @@ s = 0.8
 ns = 0.1
 
 
-
 class MDP(object):
 	"""docstring for MDP"""
 	def __init__(self, x, y, state):
@@ -26,24 +25,32 @@ class MDP(object):
 		self.state = state
 		self.delta = float("inf")
 		self.utility = 0
-		if state == 50:
-			self.utility = 50
-			self.reward = 50
-			self.dir = "DONE"
-		else:
+		
+		if state == 0:
+			self.reward = 0
 			self.utility = 0
-			self.dir = ''
-			if state == 0:
-				self.reward = 0
-			elif state == 1:
-				self.reward = -1 
-			elif state == 2:
-				self.reward = 0
-			elif state == 3:
-				self.reward = -2
-			elif state ==4:
-				self.reward = 1
-
+			self.dir = ""
+		if state == 1:
+			self.reward = -1
+			self.utility = 0
+			self.dir = ""
+		if state == 2:
+			self.reward = 0
+			self.utility = 0
+			self.dir = ""
+		if state == 3:
+			self.reward = -1
+			self.utility = 0
+			self.dir = ""
+		if state == 4:
+			self.reward = 1
+			self.utility = 0
+			self.dir = ""
+		if state == 50:
+			self.reward = 50
+			self.utility = 50
+			self.dir = "DONE"
+		
 	def possibleMoves():
 		return
 
