@@ -111,7 +111,7 @@ def inputAndRead():
 
 
 def valueIteration(mapp,e):
-	eq = 0.5*(1-gamma)/gamma
+	eq = e*(1-gamma)/gamma
 	delta = 10000
 	while (delta > eq):
 		delta = 0
