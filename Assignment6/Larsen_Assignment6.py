@@ -151,29 +151,39 @@ def calcConditional(a,a1,a2, bayes):
 		d2 = (1-bayes["cancer"].prob["lt"])*bayes["pollution"].prob*bayes["smoke"].prob + (1-bayes["cancer"].prob["ht"])*(1-bayes["pollution"].prob)*bayes["smoke"].prob
 		prob = (n1+n2)/(d1+d2)
 		return prob
+	elif a == "p|s":
+		prob = (1-bayes["pollution"].prob)
+		return prob
 	elif a == "x|x" or a == "p|p" or a == "s|s" or a == "c|c" or a == "d|d" or a == "s|cs" or a == "s|ds" or a == "c|ct" or a == "d|ds":
 		prob = 1
 		return prob
 	else:
 		print "Not a valid input"
+		return False
 
 
-def calcJoint(a,a1,a2,a3,bayes):
+def calcJoint(a,a1,a2,bayes):
 	arg1 = converter(a1)
 	arg2 = converter(a2)
-	arg3 = converter(a3)
-	if a == "psc":
-		prob = bayes["cancer"].prob["lt"]*bayes["pollution"].prob*bayes["smoke"].prob
+	
+	s = "|"
+	cond = a1+s+a2
+	
+	if type(calcConditional(cond,a1,a2,bayes)) == int or type(calcConditional(cond,a1,a2,bayes)) == float :
+		t1 = calcMarginal(a2, bayes)
+		t2 = calcConditional(cond,a1,a2,bayes)
+		temp = t1[1]
+		prob = temp*t2
 		return prob
-	elif a == "~p~sc":
-		prob = bayes["cancer"].prob["hf"]*(1-bayes["pollution"].prob)*(1-bayes["smoke"].prob)
+	else:
+		cond = a2+s+a1
+		t1 = calcMarginal(a1, bayes)
+		t2 = calcConditional(cond,a1,a2,bayes)
+		temp = t1[1]
+		prob = temp*t2
 		return prob
-	elif a == "p~s~c":
-		return prob
-	elif a == "~psc":
-		return prob
-	elif a == "~ps~c":
-		return prob
+
+	
 
 
 
@@ -252,7 +262,7 @@ def main():
 		elif o in ("-j"):
 			print "flag", o
 			print "args", a[0]
-			t = calcJoint(a, a[0],a[1],a[2],bayes)
+			t = calcJoint(a, a[0],a[1],bayes)
 			print "The joint probability for P(", a, ") is {0:.3f}".format(round(t,3))
 		else:
 			assert False, "unhandled option"
