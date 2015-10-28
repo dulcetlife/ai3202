@@ -15,8 +15,7 @@ class Node(object):
 
 	def getProb(self):
 		return self.prob
-
-#WORKS		
+	
 def calcMarginal(a, bayes):
 	arg = converter(a)
 	marginal = 0
@@ -38,13 +37,13 @@ def calcMarginal(a, bayes):
 			return "Marginal probability distribution of Smoker: True:", temp[1], "False:", (1- temp[1])
 
 	if bayes[arg].parents == None:
-		if a == "s":
+		if arg == "smoke":
 			return "smoker", bayes[arg].prob
-		elif a == "p":
+		elif arg == "pollution":
 			return "pollution", bayes[arg].prob
 	else:
 		if arg == "cancer":
-			marginal = bayes["cancer"].prob["ht"]*(bayes["pollution"].prob)*bayes["smoke"].prob+bayes["cancer"].prob["hf"]*(bayes["pollution"].prob)*(1-bayes["smoke"].prob)+bayes["cancer"].prob["lt"]*(1-bayes["pollution"].prob)*(bayes["smoke"].prob)+bayes["cancer"].prob["lf"]*(1-bayes["pollution"].prob)*(1-bayes["smoke"].prob)
+			marginal = bayes["cancer"].prob["ht"]*(1-bayes["pollution"].prob)*bayes["smoke"].prob+bayes["cancer"].prob["hf"]*(1-bayes["pollution"].prob)*(1-bayes["smoke"].prob)+bayes["cancer"].prob["lt"]*(bayes["pollution"].prob)*(bayes["smoke"].prob)+bayes["cancer"].prob["lf"]*(bayes["pollution"].prob)*(1-bayes["smoke"].prob)
 			return "Cancer",marginal
 		elif arg == "xray":
 			temp = calcMarginal("c", bayes)
@@ -56,15 +55,131 @@ def calcMarginal(a, bayes):
 			return "Dyspnoea", marginal
 		return marginal
 
-def calcConditional(a1,a2, bayesNet):
-	return
+def calcConditional(a,a1,a2, bayes):
+	arg1 = converter(a1)
+	arg2 = converter(a2)
+	if a == "c|s":
+		print bayes["pollution"].prob
+		prob = (bayes["cancer"].prob["lt"]*bayes["pollution"].prob*bayes["smoke"].prob + bayes["cancer"].prob["ht"]*(1-bayes["pollution"].prob)*bayes["smoke"].prob)/bayes["smoke"].prob
+		return prob
+	elif a == "s|c":
+		temp = calcMarginal("c",bayes)
+		prob = ((bayes["cancer"].prob["lt"]*bayes["pollution"].prob*bayes["smoke"].prob + bayes["cancer"].prob["ht"]*(1-bayes["pollution"].prob)*bayes["smoke"].prob)/bayes["smoke"].prob)*bayes["smoke"].prob/temp[1]
+		return prob
+	elif a == "c|ds":
+		n = bayes["dyspnoea"].prob["t"]*bayes["cancer"].prob["lt"]*bayes["pollution"].prob*bayes["smoke"].prob + bayes["dyspnoea"].prob["t"]*bayes["cancer"].prob["ht"]*(1-bayes["pollution"].prob)*bayes["smoke"].prob
+		d1 = bayes["dyspnoea"].prob["t"]*bayes["cancer"].prob["lt"]*bayes["pollution"].prob*bayes["smoke"].prob + bayes["dyspnoea"].prob["t"]*bayes["cancer"].prob["ht"]*(1-bayes["pollution"].prob)*bayes["smoke"].prob
+		d2 = bayes["dyspnoea"].prob["f"]*(1-bayes["cancer"].prob["lt"])*bayes["pollution"].prob*bayes["smoke"].prob + bayes["dyspnoea"].prob["f"]*(1-bayes["cancer"].prob["ht"])*(1-bayes["pollution"].prob)*bayes["smoke"].prob
+		prob = n/(d1+d2)
+		return prob
+	elif a == "c|d":
+		temp1 = calcMarginal("c",bayes)
+		temp2 = calcMarginal("d", bayes)
+		prob = bayes["dyspnoea"].prob["t"]*temp1[1]/temp2[1]
+		return prob
+	elif a == "d|s":
+		n1 = bayes["dyspnoea"].prob["t"]*bayes["cancer"].prob["lt"]*bayes["smoke"].prob*bayes["pollution"].prob + bayes["dyspnoea"].prob["t"]*bayes["cancer"].prob["ht"]*bayes["smoke"].prob*(1-bayes["pollution"].prob) 
+		n2 = bayes["dyspnoea"].prob["f"]*(1-bayes["cancer"].prob["lt"])*bayes["smoke"].prob*bayes["pollution"].prob + bayes["dyspnoea"].prob["f"]*(1-bayes["cancer"].prob["ht"])*bayes["smoke"].prob*(1-bayes["pollution"].prob) 
+		d1 = bayes["cancer"].prob["lt"]*bayes["smoke"].prob*bayes["pollution"].prob + bayes["cancer"].prob["ht"]*bayes["smoke"].prob*(1-bayes["pollution"].prob)
+		d2 = (1-bayes["cancer"].prob["lt"])*bayes["smoke"].prob*bayes["pollution"].prob + (1-bayes["cancer"].prob["ht"])*bayes["smoke"].prob*(1-bayes["pollution"].prob)
+		prob = (n1+n2)/(d1+d2)
+		return prob
+	elif a == "s|d":
+		temp = calcMarginal("d",bayes)
+		n1 = bayes["dyspnoea"].prob["t"]*bayes["cancer"].prob["lt"]*bayes["smoke"].prob*bayes["pollution"].prob + bayes["dyspnoea"].prob["t"]*bayes["cancer"].prob["ht"]*bayes["smoke"].prob*(1-bayes["pollution"].prob) 
+		n2 = bayes["dyspnoea"].prob["f"]*(1-bayes["cancer"].prob["lt"])*bayes["smoke"].prob*bayes["pollution"].prob + bayes["dyspnoea"].prob["f"]*(1-bayes["cancer"].prob["ht"])*bayes["smoke"].prob*(1-bayes["pollution"].prob) 
+		d1 = bayes["cancer"].prob["lt"]*bayes["smoke"].prob*bayes["pollution"].prob + bayes["cancer"].prob["ht"]*bayes["smoke"].prob*(1-bayes["pollution"].prob)
+		d2 = (1-bayes["cancer"].prob["lt"])*bayes["smoke"].prob*bayes["pollution"].prob + (1-bayes["cancer"].prob["ht"])*bayes["smoke"].prob*(1-bayes["pollution"].prob)
+		p1 = (n1+n2)/(d1+d2)
+		prob = (p1*bayes["smoke"].prob)/temp[1]
 
-def calcJoint(a):
-	return
+		return prob
+	elif a == "c|p":
+		t = bayes["cancer"].prob["ht"]*(1-bayes["pollution"].prob)*bayes["smoke"].prob + bayes["cancer"].prob["hf"]*(1-bayes["pollution"].prob)*(1-bayes["smoke"].prob)
+		prob = t/(1-bayes["pollution"].prob)
+		return prob
+	elif a == "p|c":
+		t = bayes["cancer"].prob["ht"]*(1-bayes["pollution"].prob)*bayes["smoke"].prob + bayes["cancer"].prob["hf"]*(1-bayes["pollution"].prob)*(1-bayes["smoke"].prob)
+		p1 = t/(1-bayes["pollution"].prob)
+		temp = calcMarginal("c",bayes)
+		prob = p1*(1-bayes["pollution"].prob)/temp[1]
+		return prob
+	elif a == "d|p":
+		n1 = bayes["dyspnoea"].prob["t"]*bayes["cancer"].prob["ht"]*(1-bayes["pollution"].prob)*bayes["smoke"].prob + bayes["dyspnoea"].prob["t"]*bayes["cancer"].prob["hf"]*(1-bayes["pollution"].prob)*(1-bayes["smoke"].prob)
+		n2 = bayes["dyspnoea"].prob["f"]*(1-bayes["cancer"].prob["ht"])*(1-bayes["pollution"].prob)*bayes["smoke"].prob + bayes["dyspnoea"].prob["f"]*(1-bayes["cancer"].prob["hf"])*(1-bayes["pollution"].prob)*(1-bayes["smoke"].prob)
+		d1 = bayes["cancer"].prob["ht"]*(1-bayes["pollution"].prob)*bayes["smoke"].prob + bayes["cancer"].prob["hf"]*(1-bayes["pollution"].prob)*(1-bayes["smoke"].prob)
+		d2 = (1-bayes["cancer"].prob["ht"])*(1-bayes["pollution"].prob)*bayes["smoke"].prob + (1-bayes["cancer"].prob["hf"])*(1-bayes["pollution"].prob)*(1-bayes["smoke"].prob)
+		prob = (n1+n2)/(d1+d2)
+		return prob
+	elif a == "p|d":
+		n1 = bayes["dyspnoea"].prob["t"]*bayes["cancer"].prob["ht"]*(1-bayes["pollution"].prob)*bayes["smoke"].prob + bayes["dyspnoea"].prob["t"]*bayes["cancer"].prob["hf"]*(1-bayes["pollution"].prob)*(1-bayes["smoke"].prob)
+		n2 = bayes["dyspnoea"].prob["f"]*(1-bayes["cancer"].prob["ht"])*(1-bayes["pollution"].prob)*bayes["smoke"].prob + bayes["dyspnoea"].prob["f"]*(1-bayes["cancer"].prob["hf"])*(1-bayes["pollution"].prob)*(1-bayes["smoke"].prob)
+		d1 = bayes["cancer"].prob["ht"]*(1-bayes["pollution"].prob)*bayes["smoke"].prob + bayes["cancer"].prob["hf"]*(1-bayes["pollution"].prob)*(1-bayes["smoke"].prob)
+		d2 = (1-bayes["cancer"].prob["ht"])*(1-bayes["pollution"].prob)*bayes["smoke"].prob + (1-bayes["cancer"].prob["hf"])*(1-bayes["pollution"].prob)*(1-bayes["smoke"].prob)
+		p1 = (n1+n2)/(d1+d2)
+		temp = calcMarginal("d",bayes)
+		prob = p1*(1-bayes["pollution"].prob)/temp[1]
+		return prob
+	elif a == "p|cs":
+		n = bayes["cancer"].prob["ht"]*bayes["smoke"].prob*(1-bayes["pollution"].prob)
+		d = bayes["cancer"].prob["ht"]*bayes["smoke"].prob*(1-bayes["pollution"].prob) + bayes["cancer"].prob["lt"]*bayes["smoke"].prob*(bayes["pollution"].prob)
+		prob = n/d
+		return prob
+	elif a == "d|c":
+		temp1 = calcMarginal("c",bayes)
+		temp2 = calcMarginal("d", bayes)
+		prob1 = bayes["dyspnoea"].prob["t"]*temp1[1]/temp2[1]
+		prob = (prob1*temp2[1])/temp1[1]
+		return prob
+	elif a == "p|ds":
+		n = bayes["dyspnoea"].prob["t"]*bayes["cancer"].prob["ht"]*(1-bayes["pollution"].prob)*bayes["smoke"].prob + bayes["dyspnoea"].prob["f"]*(1-bayes["cancer"].prob["ht"])*(1-bayes["pollution"].prob)*bayes["smoke"].prob
+		d1 = bayes["dyspnoea"].prob["t"]*bayes["cancer"].prob["ht"]*(1-bayes["pollution"].prob)*bayes["smoke"].prob + bayes["dyspnoea"].prob["t"]*bayes["cancer"].prob["lt"]*bayes["pollution"].prob*bayes["smoke"].prob
+		d2 = bayes["dyspnoea"].prob["f"]*(1-bayes["cancer"].prob["ht"])*(1-bayes["pollution"].prob)*bayes["smoke"].prob + bayes["dyspnoea"].prob["f"]*(1-bayes["cancer"].prob["lt"])*bayes["pollution"].prob*bayes["smoke"].prob
+		prob = n/(d1+d2)
+		return prob
+	elif a == "x|ds":
+		n1 = bayes["xray"].prob["t"]*bayes["dyspnoea"].prob["t"]*bayes["cancer"].prob["ht"]*(1-bayes["pollution"].prob)*bayes["smoke"].prob + bayes["xray"].prob["f"]*bayes["dyspnoea"].prob["f"]*(1-bayes["cancer"].prob["ht"])*(1-bayes["pollution"].prob)*bayes["smoke"].prob
+		n2 = bayes["xray"].prob["t"]*bayes["dyspnoea"].prob["t"]*bayes["cancer"].prob["lt"]*bayes["pollution"].prob*bayes["smoke"].prob + bayes["xray"].prob["f"]*bayes["dyspnoea"].prob["f"]*(1-bayes["cancer"].prob["lt"])*bayes["pollution"].prob*bayes["smoke"].prob
+		d1 = bayes["dyspnoea"].prob["t"]*bayes["cancer"].prob["ht"]*(1-bayes["pollution"].prob)*bayes["smoke"].prob + bayes["dyspnoea"].prob["f"]*(1-bayes["cancer"].prob["ht"])*(1-bayes["pollution"].prob)*bayes["smoke"].prob 
+		d2 = bayes["dyspnoea"].prob["t"]*bayes["cancer"].prob["lt"]*bayes["pollution"].prob*bayes["smoke"].prob + bayes["dyspnoea"].prob["f"]*(1-bayes["cancer"].prob["lt"])*bayes["pollution"].prob*bayes["smoke"].prob
+		prob = (n1+n2)/(d1+d2)
+		return prob
+	elif a == "x|s":
+		n1 = bayes["xray"].prob["t"]*bayes["cancer"].prob["lt"]*bayes["pollution"].prob*bayes["smoke"].prob + bayes["xray"].prob["t"]*bayes["cancer"].prob["ht"]*(1-bayes["pollution"].prob)*bayes["smoke"].prob
+		n2 = bayes["xray"].prob["f"]*(1-bayes["cancer"].prob["lt"])*bayes["pollution"].prob*bayes["smoke"].prob + bayes["xray"].prob["f"]*(1-bayes["cancer"].prob["ht"])*(1-bayes["pollution"].prob)*bayes["smoke"].prob
+		d1 = bayes["cancer"].prob["lt"]*bayes["pollution"].prob*bayes["smoke"].prob + bayes["cancer"].prob["ht"]*(1-bayes["pollution"].prob)*bayes["smoke"].prob 
+		d2 = (1-bayes["cancer"].prob["lt"])*bayes["pollution"].prob*bayes["smoke"].prob + (1-bayes["cancer"].prob["ht"])*(1-bayes["pollution"].prob)*bayes["smoke"].prob
+		prob = (n1+n2)/(d1+d2)
+		return prob
+	elif a == "x|x" or a == "p|p" or a == "s|s" or a == "c|c" or a == "d|d" or a == "s|cs" or a == "s|ds" or a == "c|ct" or a == "d|ds":
+		prob = 1
+		return prob
+	else:
+		print "Not a valid input"
+
+
+def calcJoint(a,a1,a2,a3,bayes):
+	arg1 = converter(a1)
+	arg2 = converter(a2)
+	arg3 = converter(a3)
+	if a == "psc":
+		prob = bayes["cancer"].prob["lt"]*bayes["pollution"].prob*bayes["smoke"].prob
+		return prob
+	elif a == "~p~sc":
+		prob = bayes["cancer"].prob["hf"]*(1-bayes["pollution"].prob)*(1-bayes["smoke"].prob)
+		return prob
+	elif a == "p~s~c":
+		return prob
+	elif a == "~psc":
+		return prob
+	elif a == "~ps~c":
+		return prob
+
+
 
 def setPrior(bayes,node,probi):
 	bayes[node].prob = probi
-	print bayes[node].prob
+	print "Prior for", node, "set to:",bayes[node].prob
 	
 
 def bayesNet(smokeprob, pollprob):
@@ -92,13 +207,10 @@ def converter(a):
 		a = "dyspnoea"
 
 	return a
-	
-
-
 
 def main():
 	smokeprob = 0.3
-	pollprob = 0.1
+	pollprob = 0.9
 	bayes = bayesNet(smokeprob, pollprob)
 	try:
 		opts, args = getopt.getopt(sys.argv[1:], "m:g:j:p:")
@@ -134,11 +246,14 @@ def main():
 			p = a.find("|")
 			print a[:p]
 			print a[p+1:]
-			calcConditional(a[:p], a[p+1:], bayesNet)
+
+			t = calcConditional(a, a[:p], a[p+1:], bayes)
+			print "The conditinal probability for P(",a,") is {0:.3f}".format(round(t,3)) 
 		elif o in ("-j"):
 			print "flag", o
 			print "args", a[0]
-			calcJoint(bayesNet)
+			t = calcJoint(a, a[0],a[1],a[2],bayes)
+			print "The joint probability for P(", a, ") is {0:.3f}".format(round(t,3))
 		else:
 			assert False, "unhandled option"
 
