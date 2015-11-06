@@ -144,9 +144,20 @@ def prob2(bayes):
 		+(bayes["rain"].prob["~c"]*bayes["cloudy"].prob))
 
 	#p(s|w)
-	sprinkler = bayes["sprinkler"].prob["c"]*bayes["cloudy"].prob + bayes["sprinkler"].prob["~c"]*bayes["cloudy"].prob
+	sprinkler = (bayes["sprinkler"].prob["c"]*bayes["cloudy"].prob + bayes["sprinkler"].prob["~c"]*bayes["cloudy"].prob)
 	rain = bayes["rain"].prob["c"]*bayes["cloudy"].prob + bayes["rain"].prob["~c"]*bayes["cloudy"].prob
-	sprinklerAndRain = sprinkler*rain
+	sprinklerAndRain1 = sprinkler*rain
+	t1 = sprinkler*(1-rain)
+	t2 = (1-sprinkler)*rain
+	prob2c = (bayes["wet"].prob["sr"]*sprinklerAndRain1 + bayes["wet"].prob["s~r"]*t1)/(bayes["wet"].prob["sr"]*sprinklerAndRain1 + bayes["wet"].prob["s~r"]*t1 + bayes["wet"].prob["~sr"]*t2)
+	
+	#p(s|c,w)
+	t3 = bayes["sprinkler"].prob["c"]*(bayes["rain"].prob["~c"])
+	t4 = bayes["sprinkler"].prob["~c"]*(bayes["rain"].prob["c"])
+	sprinklerAndRain2 = t3*t4
+	prob2d = (bayes["wet"].prob["sr"]*sprinklerAndRain2 + bayes["wet"].prob["s~r"]*t3)/(bayes["wet"].prob["sr"]*sprinklerAndRain2 + bayes["wet"].prob["s~r"]*t3 + bayes["wet"].prob["~sr"]*t4)
+	
+	return prob2a, prob2b, prob2c, prob2d
 
 	
 def prob3(bayes):
@@ -272,12 +283,17 @@ def prob3(bayes):
 	return prob3a,prob3b,prob3c,prob3d
 
 
-def printer(prob1,prob3):
+def printer(prob1, prob2, prob3):
 	print "Problem 1: Prior Sampling"
 	print "P(c = True) =", prob1[0]
 	print "P(c = True | r = True) =", prob1[1]
 	print "P(s = True | w = True) =", prob1[2]
 	print "P(s = True | c = True, w = True) =", prob1[3]
+	print "\nProblem 2: Exact probability"
+	print "P(c = True) =", prob2[0]
+	print "P(c = True | r = True) =", prob2[1]
+	print "P(s = True | w = True) =", prob2[2]
+	print "P(s = True | c = True, w = True) =", prob2[3]
 	print "\nProblem 3: Rejection Sampling"
 	print "P(c = True) =", prob3[0]
 	print "P(c = True | r = True) =", prob3[1]
@@ -288,9 +304,9 @@ def main():
 	bayes = bayesNet()
 	newSample = generatePriorSample(bayes)
 	prob1List = prob1(newSample)
+	prob2List = prob2(bayes)
 	prob3List = prob3(bayes)
-	prob2(bayes)
-	printer(prob1List, prob3List)
+	printer(prob1List, prob2List, prob3List)
 	
 	
 
