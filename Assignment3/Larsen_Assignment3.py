@@ -117,7 +117,6 @@ def getAdjacent(crd, graph):
     return cells
 
 
-
 def printPath(start, end, cells):
 	history = []
 	history.append(end)

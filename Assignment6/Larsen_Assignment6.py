@@ -219,7 +219,7 @@ def converter(a):
 	return a
 
 def main():
-	smokeprob = 0.3
+	smokeprob = 0.3  
 	pollprob = 0.9
 	bayes = bayesNet(smokeprob, pollprob)
 	try:
